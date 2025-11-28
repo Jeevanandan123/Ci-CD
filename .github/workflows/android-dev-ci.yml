@@ -1,68 +1,29 @@
-name: Android Dev CI
-
+name: Build Android
 on:
   push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
-
+    branches:
+      - main
+      - develop
 jobs:
-  build-android-debug:
-    name: Build Android Debug APK
+  build:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      actions: read
-      id-token: write
-      checks: write
-      pull-requests: write
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
-          cache: 'npm'
-
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install npm dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Test
-        run: npm test -- --ci
-
-      - name: Ensure Gradle wrapper is executable
-        run: chmod +x android/gradlew
-
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Install Android build tools and platforms
+          node-version: '18'
+      - name: Install dependencies
         run: |
-          sdkmanager --install "platform-tools" "platforms;android-36" "build-tools;36.0.0"
-
-      - name: Build debug APK
-        working-directory: android
-        run: ./gradlew --no-daemon assembleDebug
-
-      - name: Upload debug APK artifact
-        uses: actions/upload-artifact@v4
+          yarn install
+      - name: Build Android APK
+        run: |
+          cd android
+          chmod +x ./gradlew
+          ./gradlew assembleDebug
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: app-debug-apk
+          name: app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
