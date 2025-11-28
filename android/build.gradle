@@ -6,6 +6,8 @@ buildscript {
         targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
         kotlinVersion = "2.1.20"
+        // ffmpeg-kit package selector (min, full, https, etc.)
+        ffmpegKitPackage = "min-lts"
     }
     repositories {
         google()
