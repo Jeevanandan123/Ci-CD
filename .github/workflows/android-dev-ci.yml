@@ -47,10 +47,10 @@ jobs:
           username: ${{ secrets.EMAIL_USER }}
           password: ${{ secrets.EMAIL_PASS }}
           subject: "New Public Release APK Build"
-          to: "jeevaje636@gmail.com"
+          to: "jeevaje636@gmail.com,srij33894@gmail.com"
           from: "CI BOT <${{ secrets.EMAIL_USER }}>"
           body: |
-            Hi Jeevanandan,
+            Hi,
 
             Your new RELEASE APK is ready.
 
