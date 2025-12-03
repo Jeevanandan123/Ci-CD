@@ -26,7 +26,7 @@ jobs:
         run: |
           cd android
           chmod +x ./gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleRelease
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
