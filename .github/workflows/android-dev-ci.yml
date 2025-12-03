@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Build Android APK
+      - name: Build Android Release APK
         run: |
           cd android
           chmod +x ./gradlew
@@ -35,7 +35,7 @@ jobs:
           name: Development Build
           draft: false
           prerelease: true
-          files: android/app/build/outputs/apk/debug/app-debug.apk
+          files: android/app/build/outputs/apk/release/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -46,16 +46,16 @@ jobs:
           server_port: 587
           username: ${{ secrets.EMAIL_USER }}
           password: ${{ secrets.EMAIL_PASS }}
-          subject: "New Public Development APK Build"
+          subject: "New Public Release APK Build"
           to: "jeevaje636@gmail.com"
           from: "CI BOT <${{ secrets.EMAIL_USER }}>"
           body: |
             Hi Jeevanandan,
 
-            Your new development APK is ready.
+            Your new RELEASE APK is ready.
 
-            Apk Link :
-            https://github.com/Jeevanandan123/Ci-CD/releases/download/dev-build/app-debug.apk
+            Public Download Link:
+            https://github.com/Jeevanandan123/Ci-CD/releases/download/dev-build/app-release.apk
 
             --
-            React Native CI 
+            React Native CI Bot
