@@ -1,29 +1,70 @@
-name: Build Android
+name: Build Android and Send Email
+
 on:
   push:
     branches:
       - main
       - develop
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: '20'
+
       - name: Install dependencies
-        run: |
-          yarn install
+        run: yarn install
+
       - name: Build Android APK
         run: |
           cd android
           chmod +x ./gradlew
           ./gradlew assembleDebug
-      - name: Upload APK artifact
+
+      - name: Upload APK Artifact
+        id: upload_apk
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Get Artifact Download URL
+        id: get_url
+        run: |
+          ARTIFACT_ID=${{ steps.upload_apk.outputs.artifact-id }}
+
+          URL=$(gh api \
+            repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID \
+            --jq '.archive_download_url')
+
+          echo "artifact_url=$URL" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Email with APK Link
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: "New Development APK Build"
+          to: "jeevaje636@gmail.com"
+          from: "CI BOT <${{ secrets.EMAIL_USER }}>"
+          body: |
+            Hi Jeevanandan,
+
+            Your new development APK is ready.
+
+            Download Link:
+            ${{ steps.get_url.outputs.artifact_url }}
+
+            --
+            React Native CI Bot
