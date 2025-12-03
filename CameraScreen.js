@@ -42,6 +42,7 @@ export default function CameraScreen() {
 
   // Load settings when screen comes into focus
   useEffect(() => {
+    console.log('CameraScreen focused, loading settings jeeva');
     const loadSettings = async () => {
       try {
         const stored = await AsyncStorage.multiGet(['resolution', 'locationEnabled', 'autoDeleteDays']);
